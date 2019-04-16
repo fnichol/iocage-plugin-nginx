@@ -1,0 +1,29 @@
+# @@TEMPLATE@@
+
+events {
+  worker_connections  1024;
+}
+
+http {
+  include       mime.types;
+  default_type  application/octet-stream;
+
+  sendfile        on;
+
+  server {
+    listen @@nginx_listen_addr@@:443 default_server ssl;
+    server_name _;
+
+    ssl_certificate      cert.pem;
+    ssl_certificate_key  key.pem;
+
+    ssl_session_cache    shared:SSL:1m;
+    ssl_session_timeout  5m;
+
+    location / {
+      root      /usr/local/www/nginx;
+      index     index.html index.htm;
+      autoindex on;
+    }
+  }
+}
