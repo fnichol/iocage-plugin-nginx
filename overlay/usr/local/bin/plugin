@@ -392,10 +392,10 @@ invoke_config_set() {
   local cfg_path="$1"
   shift
 
-  if [ -z "${2:-}" ]; then
+  if [ -z "${1:-}" ]; then
     print_usage_config_set >&2
     echo
-    echo "xxx missing argument" >&2
+    echo "xxx missing key argument" >&2
     echo
     return 1
   fi
@@ -406,8 +406,16 @@ invoke_config_set() {
       return 0
       ;;
     *)
+      if [ -z "${2:-}" ]; then
+        print_usage_config_set >&2
+        echo
+        echo "xxx missing value argument" >&2
+        echo
+        return 1
+      fi
+
       set_value_for_key "$cfg_path" "$1" "$2"
-      echo "set config; $1='$2'"
+      echo "config key set; $1='$2'"
       ;;
   esac
 }
@@ -504,7 +512,8 @@ invoke_services_restart() {
   fi
 
   local services
-  services="$(get_value_from_key "$cfg_path" __plugin_services)"
+  services="$(get_value_from_key "$cfg_path" __plugin_services 2>/dev/null \
+    || echo)"
 
   if [ -z "$services" ]; then
     echo "no services to restart, done."
@@ -532,7 +541,11 @@ invoke_services_set() {
     return 1
   fi
 
-  set_value_for_key "$cfg_path" __plugin_services "$(echo "$@" | tr ' ' ',')"
+  local value
+  value="$(echo "$@" | tr ' ' ',')"
+
+  set_value_for_key "$cfg_path" __plugin_services "$value"
+  echo "services set; services='$value'"
 }
 
 invoke_template() {
@@ -573,6 +586,14 @@ invoke_template_render() {
   local cfg_path="$1"
   shift
 
+  if [ -z "${1:-}" ]; then
+    print_usage_template_render >&2
+    echo
+    echo "xxx missing argument" >&2
+    echo
+    return 1
+  fi
+
   case "$1" in
     --help | -h | help)
       print_usage_template_render
@@ -591,7 +612,9 @@ invoke_template_render() {
 get_all_keys() {
   local cfg_path="$1"
 
-  find "$cfg_path" -type f -depth 1 ! -name '__*' -exec basename {} \;
+  if [ -d "$cfg_path" ]; then
+    find "$cfg_path" -type f -depth 1 ! -name '__*' -exec basename {} \;
+  fi
 }
 
 get_all_values() {
