@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+log() {
+  echo "$1" >>/root/PLUGIN_INFO
+}
+
 plugin services set nginx
 
 plugin config set nginx_listen_addr 0.0.0.0
@@ -28,13 +32,13 @@ i
 .
 wq!
 EOEX
-  echo "Modified nginx rc.d script to render config"
+  log "Modified nginx rc.d script to render config"
 fi
 
 # Enable the service
 sysrc -f /etc/rc.conf nginx_enable=YES
-echo "Enabled nginx service"
+log "Enabled nginx service"
 
 # Start the service
 service nginx start
-echo "Started nginx service"
+log "Started nginx service"
