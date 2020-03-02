@@ -90,7 +90,7 @@ $ mnt=/mnt/$dataset
 # Attach an existing ZFS dataset to be served
 $ sudo iocage exec $jail rm -rf /usr/local/www/nginx
 $ sudo iocage exec $jail mkdir /usr/local/www/nginx
-$ sudo iocage fstab -a $jail "$mnt /usr/local/www/nginx nullfs r 0 0"
+$ sudo iocage fstab -a $jail "$mnt /usr/local/www/nginx nullfs ro 0 0"
 
 # Restart the nginx service
 $ sudo iocage exec $jail plugin services restart
