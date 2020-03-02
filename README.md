@@ -1,6 +1,6 @@
 # iocage-plugin-nginx
 
-An [nginx][] plugin for [Gitea][], a Robust and small WWW server.
+An [iocage][] plugin for [nginx][], a Robust and small WWW server.
 
 [iocage]: https://github.com/iocage/iocage
 [nginx]: https://www.nginx.com/
