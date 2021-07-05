@@ -158,8 +158,8 @@ your design, and help you find out if someone else is working on the same thing.
 
 ## Release History
 
-This project uses a "deployable master" strategy, meaning that the `master`
-branch is assumed to be working and production ready. As such there is no formal
+This project uses a "deployable main" strategy, meaning that the `main` branch
+is assumed to be working and production ready. As such there is no formal
 versioning process and therefore also no formal changelog documentation.
 
 ## Authors
@@ -179,8 +179,7 @@ licensed as above, without any additional terms or conditions.
   https://api.cirrus-ci.com/github/fnichol/iocage-plugin-nginx.svg
 [ci]: https://cirrus-ci.com/github/fnichol/iocage-plugin-nginx
 [code-of-conduct]:
-  https://github.com/fnichol/iocage-plugin-nginx/blob/master/CODE_OF_CONDUCT.md
+  https://github.com/fnichol/iocage-plugin-nginx/blob/main/CODE_OF_CONDUCT.md
 [fnichol]: https://github.com/fnichol
 [issues]: https://github.com/fnichol/iocage-plugin-nginx/issues
-[license]:
-  https://github.com/fnichol/iocage-plugin-nginx/blob/master/LICENSE.txt
+[license]: https://github.com/fnichol/iocage-plugin-nginx/blob/main/LICENSE.txt
