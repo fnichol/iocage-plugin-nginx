@@ -3,3 +3,12 @@ check_task:
     image: fnichol/check-shell:latest
   setup_script: apk add jq
   check_script: make check
+
+ci_finished_task:
+  name: ci-finished
+  depends_on:
+    - check
+  container:
+    image: alpine:3
+  clone_script: mkdir -p "$CIRRUS_WORKING_DIR"
+  success_script: /bin/true
