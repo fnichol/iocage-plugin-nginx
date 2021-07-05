@@ -35,14 +35,17 @@ An [iocage][] plugin for [nginx][], a Robust and small WWW server.
 ## Installation
 
 This plugin can be installed via the [fnichol/iocage-plugin-index][index] plugin
-collection which is not installed on FreeNAS or TrueOS by default. For example,
+collection which is not installed on TrueOS or FreeBSD by default. For example,
 to install the plugin with a name of `nginx` and a dedicated IP address:
 
-```console
-$ jail=www
-$ ip_addr=10.200.0.110
+```sh
+# Variables
+jail=www
+ip_addr=10.200.0.110
+```
 
-$ sudo iocage fetch \
+```sh
+sudo iocage fetch \
   -g https://github.com/fnichol/iocage-plugin-index \
   -P nginx \
   --name $jail \
@@ -61,15 +64,20 @@ configuration directory of the plugin's jail. Assuming a running installed
 plugin called `www` with a jail mount point of `/mnt/tank/iocage/jails/www` in
 the host system, the following will setup nginx to run under HTTPS:
 
-```console
-$ jail=www
-$ jail_mnt=/mnt/tank/iocage/jails/$jail
+```sh
+# Variables
+jail=www
+jail_mnt=/mnt/tank/iocage/jails/$jail
 
-$ sudo cp cert.pem key.pem $jail_mnt/root/usr/local/etc/nginx/
-$ sudo chown 0644 $jail_mnt/root/usr/local/etc/nginx/cert.pem
-$ sudo chown 0600 $jail_mnt/root/usr/local/etc/nginx/key.pem
-$ sudo iocage exec $jail plugin config set nginx_mode https
-$ sudo iocage exec $jail plugin services restart
+cert=/tmp/cert.pem
+key=/tmp/key.pem
+```
+
+```sh
+sudo install -p -m 0644 $cert $jail_mnt/root/usr/local/etc/nginx/cert.pem
+sudo install -p -m 0600 $key $jail_mnt/root/usr/local/etc/nginx/key.pem
+sudo iocage exec $jail plugin config set nginx_mode https
+sudo iocage exec $jail plugin services restart
 ```
 
 ### Persisting Data
@@ -82,18 +90,20 @@ A good strategy is to create a ZFS dataset for this directory or use an existing
 dataset and mount it into the jail. This way, the jail can be destroyed and
 later re-created without losing the served up web content.
 
-```console
-$ jail=www
-$ dataset=tank/website
-$ mnt=/mnt/$dataset
+```sh
+# Variables
+jail=www
+mnt=/mnt/tank/website
+```
 
+```sh
 # Attach an existing ZFS dataset to be served
-$ sudo iocage exec $jail rm -rf /usr/local/www/nginx
-$ sudo iocage exec $jail mkdir /usr/local/www/nginx
-$ sudo iocage fstab -a $jail "$mnt /usr/local/www/nginx nullfs ro 0 0"
+sudo iocage exec $jail rm -rf /usr/local/www/nginx
+sudo iocage exec $jail mkdir /usr/local/www/nginx
+sudo iocage fstab -a $jail "$mnt /usr/local/www/nginx nullfs ro 0 0"
 
 # Restart the nginx service
-$ sudo iocage exec $jail plugin services restart
+sudo iocage exec $jail plugin services restart
 ```
 
 ## Configuration
@@ -116,9 +126,9 @@ Note that `"https-"` mode runs the service on `HTTP` and `HTTPS` whereas
 To change this value, use the installed `plugin` program and restart the
 services to apply the updated configuration:
 
-```console
-$ plugin config set nginx_mode http
-$ plugin services restart
+```sh
+plugin config set nginx_mode http
+plugin services restart
 ```
 
 ### System Configuration
