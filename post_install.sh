@@ -1,21 +1,30 @@
 #!/bin/sh
-set -eu
 
-log() {
-  echo "$1" >>/root/PLUGIN_INFO
+main() {
+  set -eu
+  if [ -n "${DEBUG:-}" ]; then
+    set -x
+  fi
+
+  configure
+  patch_rc_d_nginx
+  enable_services
+  start_services
 }
 
-plugin services set nginx
+configure() {
+  plugin services set nginx
 
-plugin config set nginx_listen_addr 0.0.0.0
-plugin config set nginx_mode http
+  plugin config set nginx_listen_addr 0.0.0.0
+  plugin config set nginx_mode http
+}
 
-if ! grep -q 'template render' /usr/local/etc/rc.d/nginx >/dev/null; then
-  ex /usr/local/etc/rc.d/nginx <<EOEX
+patch_rc_d_nginx() {
+  if ! grep -q 'template render' /usr/local/etc/rc.d/nginx >/dev/null; then
+    ex /usr/local/etc/rc.d/nginx <<EOEX
 /^nginx_checkconfig()
 +3
 i
-
 
 	nginx_mode="\$(/usr/local/bin/plugin config get nginx_mode || echo '')"
 	case "\$nginx_mode" in
@@ -32,13 +41,22 @@ i
 .
 wq!
 EOEX
-  log "Modified nginx rc.d script to render config"
-fi
+    log "Modified nginx rc.d script to render config"
+  fi
+}
 
-# Enable the service
-sysrc -f /etc/rc.conf nginx_enable=YES
-log "Enabled nginx service"
+enable_services() {
+  sysrc nginx_enable="YES"
+  log "Enabled nginx service"
+}
 
-# Start the service
-service nginx start
-log "Started nginx service"
+start_services() {
+  service nginx start
+  log "Started nginx service"
+}
+
+log() {
+  echo "$1" >>/root/PLUGIN_INFO
+}
+
+main "$@"
